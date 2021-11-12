@@ -1,0 +1,19 @@
+{
+  "tags": [
+    { "type": "终结符", "value": "+" },
+    { "type": "终结符", "value": "-" },
+    { "type": "终结符", "value": "*" },
+    { "type": "终结符", "value": "/" },
+    { "type": "终结符", "value": "(" },
+    { "type": "终结符", "value": ")" },
+    { "type": "终结符", "value": "num" },
+    { "type": "非终结符", "value": "E" },
+    { "type": "非终结符", "value": "F" },
+    { "type": "非终结符", "value": "T" }
+  ],
+  "productions": [
+    "E → E+T | E-T | T",
+    "T → T*F | T/F | F",
+    "F → (E) | num"
+  ]
+}
