@@ -10,5 +10,10 @@ func main() {
 		panic(err)
 	}
 
-	base.GetFirst(base.GetTags()[8])
+	tags := base.GetTags()
+
+	base.GetFirst(tags[8])
+	d := base.GetFollow(tags[8], 0)
+
+	print(len(d))
 }

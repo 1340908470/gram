@@ -39,7 +39,10 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 				}
 				newProductions = append(newProductions, pr)
 				// 将新添加的 E' 加入tags中
-				AddTag(tmpTag)
+				AddTag(Tag{
+					Type:  tmpTag.Type,
+					Value: tmpTag.Value + "'",
+				})
 			}
 
 			// E -> Ef
@@ -60,6 +63,22 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 		}
 
 		newProductions = append(newProductions, production)
+	}
+
+	if tmpTag.Value != "" {
+		pr := Production{
+			Left: tmpTag,
+			Right: []Tag{{
+				Type:  TERM,
+				Value: "ε",
+			}},
+		}
+		newProductions = append(newProductions, pr)
+		// 将新添加的 E' 加入tags中
+		AddTag(Tag{
+			Type:  tmpTag.Type,
+			Value: tmpTag.Value + "'",
+		})
 	}
 
 	return newProductions, nil
