@@ -1,15 +1,14 @@
 package main
 
 import (
-	"gram/def"
+	"gram/base"
 )
 
 func main() {
-	err := def.InitDef()
+	err := base.InitDef()
 	if err != nil {
 		panic(err)
 	}
 
-	def.GetTags()
-	def.GetProductions()
+	base.GetFirst(base.GetTags()[8])
 }

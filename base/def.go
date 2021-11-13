@@ -1,27 +1,30 @@
-package def
+package base
 
 import (
 	"encoding/json"
 	"errors"
-	"gram/base"
 	"io/ioutil"
 	"strings"
 )
 
-type Tag struct {
+type TmpTag struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
 }
 
 type Def struct {
-	Tags        []Tag    `json:"tags"`
+	Tags        []TmpTag `json:"tags"`
 	Productions []string `json:"productions"`
 }
 
 var def Def
+var tags []Tag
+var productions []Production
+var prodMap = make(map[Tag][]Production)
 
+// InitDef 初始化操作，需在程序的入口处执行，以将json文件的内容读到内存中去
 func InitDef() error {
-	file, err := ioutil.ReadFile("def/def.json")
+	file, err := ioutil.ReadFile("base/def.json")
 	if err != nil {
 		return errors.New("文件 def.json 读取失败")
 	}
@@ -31,21 +34,15 @@ func InitDef() error {
 		return errors.New("def.json 解析失败")
 	}
 
-	return err
-}
-
-// GetTags 返回的是程序解析时真正使用的 base.Tag
-func GetTags() []base.Tag {
-	var tags []base.Tag
-
+	// 从文件解析初始Tags
 	for _, val := range def.Tags {
-		tag := base.Tag{
-			Type: func(t Tag) int {
+		tag := Tag{
+			Type: func(t TmpTag) int {
 				if t.Type == "终结符" {
-					return base.TERM
+					return TERM
 				}
 				if t.Type == "非终结符" {
-					return base.NONTERM
+					return NONTERM
 				}
 				return -1
 			}(val),
@@ -54,14 +51,7 @@ func GetTags() []base.Tag {
 		tags = append(tags, tag)
 	}
 
-	return tags
-}
-
-// GetProductions 返回的是程序解析时使用的 base.Production
-// 形如 "E → E+T | E–T | T" 的产生式会被拆分为三个 production
-func GetProductions() []base.Production {
-	var productions []base.Production
-
+	// 从文件解析初始Productions
 	for _, val := range def.Productions {
 		// 首先去空格，然后切分
 		strs := strings.Split(strings.Replace(val, " ", "", -1), "→")
@@ -69,7 +59,7 @@ func GetProductions() []base.Production {
 		// strs被分为两个部分，0为左部元素，1为右部元素
 
 		// 根据 GetTags 找到左部对应的 Tag
-		var left base.Tag
+		var left Tag
 		for _, tag := range GetTags() {
 			if tag.Value == strs[0] {
 				left = tag
@@ -79,7 +69,7 @@ func GetProductions() []base.Production {
 
 		// 右部根据 "｜" 再次划分，然后再遍历加入 productions
 		for _, right := range strings.Split(strs[1], "|") {
-			var tags []base.Tag
+			var tags []Tag
 			index := 0
 			for index < len(right) {
 				for _, tag := range GetTags() {
@@ -91,7 +81,7 @@ func GetProductions() []base.Production {
 				}
 			}
 
-			production := base.Production{
+			production := Production{
 				Left:  left,
 				Right: tags,
 			}
@@ -101,5 +91,38 @@ func GetProductions() []base.Production {
 
 	}
 
+	// 遍历消除左递归
+	for _, tag := range GetTags() {
+		if tag.Type == NONTERM {
+			pros, err := GetProductionsByTag(GetProductions(), tag)
+			if err != nil {
+				panic(err)
+			}
+			for _, pro := range pros {
+				prodMap[pro.Left] = append(prodMap[pro.Left], pro)
+			}
+		}
+	}
+
+	return err
+}
+
+func AddTag(tag Tag) {
+	tags = append(tags, tag)
+}
+
+// GetTags 返回的是程序解析时真正使用的 base.Tag
+func GetTags() []Tag {
+	return tags
+}
+
+// GetProdMap 获得以生成式左部为键的生成式mao
+func GetProdMap() map[Tag][]Production {
+	return prodMap
+}
+
+// GetProductions 返回的是程序解析时使用的 base.Production
+// 形如 "E → E+T | E–T | T" 的产生式会被拆分为三个 production
+func GetProductions() []Production {
 	return productions
 }
