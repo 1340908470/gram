@@ -1,7 +1,11 @@
 package base
 
 // GetFollow 根据推导式的左部，得到其对应的Follow集
-func GetFollow(left Tag, depth int) []Tag {
+func GetFollow(left Tag) []Tag {
+	return getFollowRE(left, 0)
+}
+
+func getFollowRE(left Tag, depth int) []Tag {
 	// 限制递归深度
 	if depth > 5 {
 		return []Tag{}
@@ -33,7 +37,7 @@ func GetFollow(left Tag, depth int) []Tag {
 					Type:  TERM,
 					Value: "ε",
 				}, GetFirst(production.Right[i+1])) {
-					for _, t := range GetFollow(production.Left, depth+1) {
+					for _, t := range getFollowRE(production.Left, depth+1) {
 						if !HasReTags(t, follow) {
 							follow = append(follow, t)
 						}

@@ -91,6 +91,11 @@ func InitDef() error {
 
 	}
 
+	return err
+}
+
+// RemoveLeftRecursion 消除左递归
+func RemoveLeftRecursion() {
 	// 遍历消除左递归
 	for _, tag := range GetTags() {
 		if tag.Type == NONTERM {
@@ -103,8 +108,6 @@ func InitDef() error {
 			}
 		}
 	}
-
-	return err
 }
 
 func AddTag(tag Tag) {

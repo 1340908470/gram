@@ -3,12 +3,12 @@ package base
 // GetFirst 根据推导式的左部，得到其对应的FIRST集
 func GetFirst(left Tag) []Tag {
 	var ansTags []Tag
-	GetFirstRE(left, []Tag{}, &ansTags)
+	getFirstRE(left, []Tag{}, &ansTags)
 	return nil
 }
 
-// GetFirstRE 递归查找First集，并将该次调用得到的tag加到ansTags中
-func GetFirstRE(symbol Tag, tmpTags []Tag, ansTags *[]Tag) {
+// getFirstRE 递归查找First集，并将该次调用得到的tag加到ansTags中
+func getFirstRE(symbol Tag, tmpTags []Tag, ansTags *[]Tag) {
 	// 如果出现了与之前tag相同的tag，则说明进入了循环，直接跳出
 	for _, production := range GetProdMap()[symbol] {
 		// 如果是终结符，则加入ansTag
@@ -21,7 +21,7 @@ func GetFirstRE(symbol Tag, tmpTags []Tag, ansTags *[]Tag) {
 		if production.Right[0].Type == NONTERM {
 			if !HasReTags(production.Right[0], tmpTags) {
 				tmpTags = append(tmpTags, production.Right[0])
-				GetFirstRE(production.Right[0], tmpTags, ansTags)
+				getFirstRE(production.Right[0], tmpTags, ansTags)
 			}
 		}
 	}

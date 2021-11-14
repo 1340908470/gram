@@ -2,18 +2,23 @@ package main
 
 import (
 	"gram/base"
+	"gram/ll1"
 )
 
 func main() {
+	// 初始化定义
 	err := base.InitDef()
 	if err != nil {
 		panic(err)
 	}
 
-	tags := base.GetTags()
+	/* 运算LL(1) */
+	// 消除左递归
+	base.RemoveLeftRecursion()
 
-	base.GetFirst(tags[8])
-	d := base.GetFollow(tags[8], 0)
-
-	print(len(d))
+	// 获取LL分析表
+	err = ll1.PrintLLTable(ll1.GenerateLLTable())
+	if err != nil {
+		panic(err)
+	}
 }

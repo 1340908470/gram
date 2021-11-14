@@ -1,0 +1,65 @@
+package ll1
+
+import (
+	"errors"
+	"github.com/liushuochen/gotable"
+	"gram/base"
+)
+
+// LLTable LL(1)预测分析表
+type LLTable map[base.Tag]map[base.Tag]base.Production
+
+// GenerateLLTable 生成LL(1)预测分析表
+func GenerateLLTable() LLTable {
+	llTable := make(LLTable)
+
+	for left, productions := range base.GetProdMap() {
+		llTable[left] = map[base.Tag]base.Production{}
+		for _, production := range productions {
+			// 终结符则将该式子添加到LLTable中
+			if production.Right[0].Type == base.TERM {
+				llTable[left][production.Right[0]] = production
+			}
+			// 否则求右部首元素的FIRST集，并将对应位置填上该生成式
+			if production.Right[0].Type == base.NONTERM {
+				for _, tag := range base.GetFirst(production.Right[0]) {
+					llTable[left][tag] = production
+				}
+			}
+		}
+	}
+
+	return llTable
+}
+
+// PrintLLTable 打印LL分析表
+func PrintLLTable(table LLTable) error {
+	colNames := []string{" "}
+	for _, tag := range base.GetTags() {
+		if tag.Type == base.TERM {
+			colNames = append(colNames, tag.Value)
+		}
+	}
+	gt, err := gotable.Create(colNames...)
+	if err != nil {
+		return errors.New("创建表格失败")
+	}
+
+	for tag, m := range table {
+		row := make(map[string]string)
+		row[" "] = tag.Value
+
+		for t, production := range m {
+			row[t.Value] = production.ToString()
+		}
+
+		err = gt.AddRow(row)
+		if err != nil {
+			return err
+		}
+	}
+
+	gt.PrintTable()
+
+	return err
+}

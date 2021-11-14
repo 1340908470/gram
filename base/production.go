@@ -83,3 +83,14 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 
 	return newProductions, nil
 }
+
+// ToString 将产生式转换成字符串
+func (p Production) ToString() string {
+	str := p.Left.Value + "->"
+
+	for _, tag := range p.Right {
+		str += tag.Value
+	}
+
+	return str
+}
