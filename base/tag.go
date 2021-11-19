@@ -1,5 +1,7 @@
 package base
 
+import "reflect"
+
 const (
 	TERM    = iota // 终结
 	NONTERM        // 非终结
@@ -9,4 +11,11 @@ const (
 type Tag struct {
 	Type  int    // 类型
 	Value string // 值
+}
+
+func IsEmptyTag(tag Tag) bool {
+	return reflect.DeepEqual(tag, Tag{
+		Type:  TERM,
+		Value: "ε",
+	})
 }

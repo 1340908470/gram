@@ -1,10 +1,15 @@
 package base
 
+import (
+	"fmt"
+	"reflect"
+)
+
 // GetFirst 根据推导式的左部，得到其对应的FIRST集
 func GetFirst(left Tag) []Tag {
 	var ansTags []Tag
 	getFirstRE(left, []Tag{}, &ansTags)
-	return nil
+	return ansTags
 }
 
 // getFirstRE 递归查找First集，并将该次调用得到的tag加到ansTags中
@@ -31,7 +36,7 @@ func getFirstRE(symbol Tag, tmpTags []Tag, ansTags *[]Tag) {
 func HasReTags(tag Tag, tags []Tag) bool {
 	tmp := 0
 	for _, t := range tags {
-		if t == tag {
+		if reflect.DeepEqual(t, tag) {
 			tmp++
 			break
 		}
@@ -41,4 +46,18 @@ func HasReTags(tag Tag, tags []Tag) bool {
 	} else {
 		return true
 	}
+}
+
+func PrintFirst() {
+	fmt.Printf("--------- 打印FIRST集 ---------\n")
+	for _, tag := range GetTags() {
+		if tag.Type == NONTERM {
+			fmt.Printf("%v: ", tag.Value)
+			for _, t := range GetFirst(tag) {
+				fmt.Printf("%v ", t.Value)
+			}
+			fmt.Printf("\n")
+		}
+	}
+	fmt.Printf("-----------------------------\n\n")
 }

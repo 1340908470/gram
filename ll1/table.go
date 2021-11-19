@@ -18,7 +18,15 @@ func GenerateLLTable() LLTable {
 		for _, production := range productions {
 			// 终结符则将该式子添加到LLTable中
 			if production.Right[0].Type == base.TERM {
-				llTable[left][production.Right[0]] = production
+				if !base.IsEmptyTag(production.Right[0]) {
+					// 如果First非空
+					llTable[left][production.Right[0]] = production
+				} else {
+					// 如果First为空，则在Follow(production.Left)中加入 production.Left -> ε
+					for _, tag := range base.GetFollow(production.Left) {
+						llTable[left][tag] = production
+					}
+				}
 			}
 			// 否则求右部首元素的FIRST集，并将对应位置填上该生成式
 			if production.Right[0].Type == base.NONTERM {
@@ -36,8 +44,10 @@ func GenerateLLTable() LLTable {
 func PrintLLTable(table LLTable) error {
 	colNames := []string{" "}
 	for _, tag := range base.GetTags() {
-		if tag.Type == base.TERM {
+		if tag.Type == base.TERM && !base.IsEmptyTag(tag) {
 			colNames = append(colNames, tag.Value)
+		} else if base.IsEmptyTag(tag) {
+			colNames = append(colNames, "$")
 		}
 	}
 	gt, err := gotable.Create(colNames...)

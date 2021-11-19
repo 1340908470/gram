@@ -15,6 +15,9 @@ type TmpTag struct {
 type Def struct {
 	Tags        []TmpTag `json:"tags"`
 	Productions []string `json:"productions"`
+
+	Input  string `json:"input"`
+	Method string `json:"method"`
 }
 
 var def Def
@@ -91,11 +94,19 @@ func InitDef() error {
 
 	}
 
+	// 填充prodMap
+	for _, production := range productions {
+		prodMap[production.Left] = append(prodMap[production.Left], production)
+	}
+
 	return err
 }
 
 // RemoveLeftRecursion 消除左递归
 func RemoveLeftRecursion() {
+	// 先删除原有prodMap
+	prodMap = make(map[Tag][]Production)
+
 	// 遍历消除左递归
 	for _, tag := range GetTags() {
 		if tag.Type == NONTERM {

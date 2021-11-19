@@ -1,6 +1,10 @@
 package base
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"reflect"
+)
 
 // Production 产生式
 type Production struct {
@@ -18,7 +22,7 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 
 	// 解析生成式
 	for _, production := range productions {
-		if production.Left == left {
+		if reflect.DeepEqual(production.Left, left) {
 			aimedProductions = append(aimedProductions, production)
 		}
 	}
@@ -27,11 +31,14 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 	var tmpTag Tag
 	// 消除左递归: E -> Ef | g
 	for _, production := range aimedProductions {
-		if production.Left == production.Right[0] {
+		if reflect.DeepEqual(production.Left, production.Right[0]) {
 			// 如果换tmpTag前，先添加上一个tmpTag的空产生式
 			if tmpTag.Value != "" && tmpTag != production.Left {
 				pr := Production{
-					Left: tmpTag,
+					Left: Tag{
+						Type:  tmpTag.Type,
+						Value: tmpTag.Value + "'",
+					},
 					Right: []Tag{{
 						Type:  TERM,
 						Value: "ε",
@@ -57,9 +64,12 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 			production.Left = newTag
 			production.Right = production.Right[1:]
 			production.Right = append(production.Right, newTag)
-		} else if production.Left == tmpTag {
+		} else if reflect.DeepEqual(production.Left, tmpTag) {
 			// E -> g
-			production.Right = append(production.Right, production.Left)
+			production.Right = append(production.Right, Tag{
+				Type:  production.Left.Type,
+				Value: production.Left.Value + "'",
+			})
 		}
 
 		newProductions = append(newProductions, production)
@@ -67,7 +77,10 @@ func GetProductionsByTag(productions []Production, left Tag) ([]Production, erro
 
 	if tmpTag.Value != "" {
 		pr := Production{
-			Left: tmpTag,
+			Left: Tag{
+				Type:  tmpTag.Type,
+				Value: tmpTag.Value + "'",
+			},
 			Right: []Tag{{
 				Type:  TERM,
 				Value: "ε",
@@ -93,4 +106,18 @@ func (p Production) ToString() string {
 	}
 
 	return str
+}
+
+func PrintProductions() {
+	fmt.Printf("-------- 打印当前生成式 --------\n")
+	for _, productions := range GetProdMap() {
+		for _, production := range productions {
+			fmt.Printf("%v -> ", production.Left.Value)
+			for _, t := range production.Right {
+				fmt.Printf("%v", t.Value)
+			}
+			fmt.Printf("\n")
+		}
+	}
+	fmt.Printf("-----------------------------\n\n")
 }
