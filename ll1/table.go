@@ -6,7 +6,7 @@ import (
 	"gram/base"
 )
 
-// LLTable LL(1)预测分析表
+// LLTable LL(1)预测分析表 第一个Tag是非终结符，第二个Tag是终结符，值是对应产生式
 type LLTable map[base.Tag]map[base.Tag]base.Production
 
 // GenerateLLTable 生成LL(1)预测分析表

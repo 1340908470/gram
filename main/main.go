@@ -27,7 +27,11 @@ func main() {
 	base.PrintFollow()
 
 	// 获取LL分析表
-	err = ll1.PrintLLTable(ll1.GenerateLLTable())
+	table := ll1.GenerateLLTable()
+	err = ll1.PrintLLTable(table)
+
+	// LL分析
+	err = ll1.LLAnalyze("num+num$", table)
 	if err != nil {
 		panic(err)
 	}

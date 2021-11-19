@@ -99,6 +99,9 @@ func InitDef() error {
 		prodMap[production.Left] = append(prodMap[production.Left], production)
 	}
 
+	// 在input后面追加 $
+	def.Input += "$"
+
 	return err
 }
 
