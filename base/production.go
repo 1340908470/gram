@@ -12,6 +12,13 @@ type Production struct {
 	Right []Tag // 产生式的右部是一个标识符切片
 }
 
+// ProductionWithDot LR分析时加点的生成式
+type ProductionWithDot struct {
+	Production
+	DotIndex int   // 点在产生式右部的位置，0表示在最开始的左边，len(Right)表示在最后一个的右边
+	Tags     []Tag // LR1 项目集中元素的逗号后面的 Tag序列
+}
+
 // GetProductionsByTag 根据记号，返回该非终结符的所有产生式【返回的是已经消除了左递归的式子】
 func GetProductionsByTag(productions []Production, left Tag) ([]Production, error) {
 	if left.Type != NONTERM {
@@ -108,6 +115,29 @@ func (p Production) ToString() string {
 	return str
 }
 
+func (pd ProductionWithDot) ToString() string {
+	str := pd.Left.Value + "->"
+
+	for i, tag := range pd.Right {
+		if i == pd.DotIndex {
+			str += "·"
+		}
+		str += tag.Value
+	}
+
+	if pd.DotIndex == len(pd.Right) {
+		str += "·"
+	}
+
+	str += ", "
+
+	for _, tag := range pd.Tags {
+		str += tag.Value + " "
+	}
+
+	return str
+}
+
 func PrintProductions() {
 	fmt.Printf("-------- 打印当前生成式 --------\n")
 	for _, productions := range GetProdMap() {
@@ -120,4 +150,13 @@ func PrintProductions() {
 		}
 	}
 	fmt.Printf("-----------------------------\n\n")
+}
+
+func (p Production) GetIndex() int {
+	for i, production := range GetProductions() {
+		if reflect.DeepEqual(production, p) {
+			return i
+		}
+	}
+	return 0
 }

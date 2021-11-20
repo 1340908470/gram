@@ -2,7 +2,7 @@ package main
 
 import (
 	"gram/base"
-	"gram/ll1"
+	"gram/lr1"
 )
 
 func main() {
@@ -17,22 +17,29 @@ func main() {
 	base.PrintFirst()
 	base.PrintFollow()
 
-	/* 运算LL(1) */
-	// 消除左递归
-	base.RemoveLeftRecursion()
+	///* 运算LL(1) */
+	//// 消除左递归
+	//base.RemoveLeftRecursion()
+	//base.PrintProductions()
+	//base.PrintFirst()
+	//base.PrintFollow()
+	//// 获取LL分析表
+	//table := ll1.GenerateLLTable()
+	//err = ll1.PrintLLTable(table)
+	//// LL分析
+	//err = ll1.LLAnalyze("num+num$", table)
+	//ll1.PrintProcedure()
 
-	base.PrintProductions()
+	/* 运算LR(1) */
+	// 构造拓广文法
+	base.GenerateExtension()
 
-	base.PrintFirst()
-	base.PrintFollow()
+	// 构造项目集规范族
+	lr1.GenerateFamily()
+	lr1.PrintFamily()
 
-	// 获取LL分析表
-	table := ll1.GenerateLLTable()
-	err = ll1.PrintLLTable(table)
-
-	// LL分析
-	err = ll1.LLAnalyze("num+num$", table)
-	ll1.PrintProcedure()
+	table := lr1.GenerateLRTable()
+	err = lr1.PrintLRTable(table)
 
 	if err != nil {
 		panic(err)

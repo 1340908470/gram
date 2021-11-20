@@ -8,6 +8,12 @@ import (
 // GetFirst 根据推导式的左部，得到其对应的FIRST集
 func GetFirst(left Tag) []Tag {
 	var ansTags []Tag
+
+	// 如果传入了终结符，则直接返回本身（终结符的First为本身）
+	if left.Type == TERM {
+		return []Tag{left}
+	}
+
 	getFirstRE(left, []Tag{}, &ansTags)
 	return ansTags
 }
