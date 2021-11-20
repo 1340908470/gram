@@ -2,6 +2,7 @@ package ll1
 
 import (
 	"errors"
+	"fmt"
 	"github.com/liushuochen/gotable"
 	"gram/base"
 	"reflect"
@@ -110,11 +111,18 @@ func LLAnalyze(input string, table LLTable) error {
 		}
 	}
 
-	// 运行完后，如果符号栈里还有符号，则失败
-	if !(len(TagStack) == 1 && reflect.DeepEqual(TagStack[0], base.Tag{
-		Type: base.TERM, Value: "$"})) {
-		return errors.New("分析失败：符号栈内还有元素，输入串不符合LL(1)文法")
+	// 检查Tag栈中剩余的元素，是否都有 M(E, $) = E -> ε
+	for len(TagStack) != 1 {
+		if !reflect.DeepEqual(table[PopStack()][base.Tag{
+			Type: base.TERM, Value: "$"}].Right, []base.Tag{{
+			Type:  base.TERM,
+			Value: "ε",
+		}}) {
+			return errors.New("分析失败：符号栈内还有元素，输入串不符合LL(1)文法")
+		}
 	}
+
+	fmt.Printf("\nLL分析成功！输入语句符合LL(1)文法\n")
 
 	return nil
 }

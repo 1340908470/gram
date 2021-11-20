@@ -122,6 +122,31 @@ func RemoveLeftRecursion() {
 			}
 		}
 	}
+
+}
+
+// GenerateExtension 构造拓广文法
+func GenerateExtension() {
+	// 在productions的最前面添加 E' -> E （因为程序默认第一个产生式的左部是起始符）
+	oriLeft := GetProductions()[0].Left
+	production := Production{
+		Left: Tag{
+			Type:  NONTERM,
+			Value: oriLeft.Value + "'",
+		},
+		Right: []Tag{oriLeft},
+	}
+	productions = append([]Production{production}, productions...)
+
+	// 更新prodMap
+
+	// 先删除原有prodMap
+	prodMap = make(map[Tag][]Production)
+
+	// 填充prodMap
+	for _, p := range productions {
+		prodMap[p.Left] = append(prodMap[p.Left], p)
+	}
 }
 
 func AddTag(tag Tag) {
