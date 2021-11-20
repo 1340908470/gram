@@ -63,7 +63,9 @@ func PrintProcedure() {
 		}
 	}
 
+	fmt.Printf("-------------------------- 打印LL分析过程 -------------------------\n")
 	table.PrintTable()
+	fmt.Printf("-----------------------------------------------------------------\n")
 }
 
 // LLAnalyze LL分析程序
@@ -73,8 +75,17 @@ func LLAnalyze(input string, table LLTable) error {
 	// 输入字符串的扫描指针
 	index := 0
 
+	step := 0
+
 	// 当且仅当输入队列指针所指字符为 $ 时，才会跳出循环
 	for input[index:index+1] != "$" {
+		step++
+		proc := Proc{
+			Step:  fmt.Sprintf("(%v)", step),
+			Stack: base.ConvertTagsToStr(TagStack),
+			Input: input[index:],
+		}
+
 		var tag base.Tag
 		// 将input的第一个串匹配为一个tag
 		for _, t := range base.GetTags() {
@@ -102,6 +113,9 @@ func LLAnalyze(input string, table LLTable) error {
 			// 根据分析表，得到 栈顶元素-tag 对应的产生式
 			production := table[stackTop][tag]
 
+			// 将产生式字符串放到proc中，用于打印计算过程
+			proc.Output = production.ToString()
+
 			// 将产生式的右部反序入栈（非空入栈，空则只弹不入）
 			for i := len(production.Right) - 1; i >= 0; i-- {
 				if !base.IsEmptyTag(production.Right[i]) {
@@ -109,6 +123,8 @@ func LLAnalyze(input string, table LLTable) error {
 				}
 			}
 		}
+
+		Procedures = append(Procedures, proc)
 	}
 
 	// 检查Tag栈中剩余的元素，是否都有 M(E, $) = E -> ε
@@ -122,7 +138,7 @@ func LLAnalyze(input string, table LLTable) error {
 		}
 	}
 
-	fmt.Printf("\nLL分析成功！输入语句符合LL(1)文法\n")
+	fmt.Printf("\n\nLL分析成功！输入语句符合LL(1)文法\n\n")
 
 	return nil
 }

@@ -2,6 +2,7 @@ package ll1
 
 import (
 	"errors"
+	"fmt"
 	"github.com/liushuochen/gotable"
 	"gram/base"
 )
@@ -69,7 +70,9 @@ func PrintLLTable(table LLTable) error {
 		}
 	}
 
+	fmt.Printf("-------------------------------------- 打印LL分析表 -------------------------------------\n")
 	gt.PrintTable()
+	fmt.Printf("-----------------------------------------------------------------------------------------\n")
 
 	return err
 }

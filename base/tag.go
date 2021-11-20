@@ -19,3 +19,13 @@ func IsEmptyTag(tag Tag) bool {
 		Value: "ε",
 	})
 }
+
+func ConvertTagsToStr(tags []Tag) string {
+	str := ""
+
+	for _, tag := range tags {
+		str += tag.Value
+	}
+
+	return str
+}

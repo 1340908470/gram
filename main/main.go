@@ -32,6 +32,8 @@ func main() {
 
 	// LL分析
 	err = ll1.LLAnalyze("num+num$", table)
+	ll1.PrintProcedure()
+
 	if err != nil {
 		panic(err)
 	}
