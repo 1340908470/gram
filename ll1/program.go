@@ -138,7 +138,7 @@ func LLAnalyze(input string, table LLTable) error {
 		}
 	}
 
-	fmt.Printf("\n\nLL分析成功！输入语句符合LL(1)文法\n\n")
+	fmt.Printf("\n\nLL分析成功！接受输入语句\n\n")
 
 	return nil
 }
