@@ -25,6 +25,14 @@ var tags []Tag
 var productions []Production
 var prodMap = make(map[Tag][]Production)
 
+func GetInput() string {
+	return def.Input
+}
+
+func GetMethod() string {
+	return def.Method
+}
+
 // InitDef 初始化操作，需在程序的入口处执行，以将json文件的内容读到内存中去
 func InitDef() error {
 	file, err := ioutil.ReadFile("base/def.json")
