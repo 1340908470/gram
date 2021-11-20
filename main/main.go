@@ -38,8 +38,13 @@ func main() {
 	lr1.GenerateFamily()
 	lr1.PrintFamily()
 
+	d := lr1.Groups
+	println(len(d))
+
 	table := lr1.GenerateLRTable()
 	err = lr1.PrintLRTable(table)
+	lr1.LRAnalyze("num+num$", table)
+	lr1.PrintProcedure()
 
 	if err != nil {
 		panic(err)

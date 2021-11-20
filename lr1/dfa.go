@@ -62,7 +62,7 @@ func ExpandGroup(pd base.ProductionWithDot) int {
 func RemoveRE() {
 	for i1, g1 := range Groups {
 		for i2, g2 := range Groups {
-			if reflect.DeepEqual(g1.PDs, g2.PDs) {
+			if reflect.DeepEqual(g1.PDs, g2.PDs) && i1 != i2 {
 				// 从Groups中删掉
 				Groups = append(Groups[:i2], Groups[i2+1:]...)
 				// 把GroupRelation中，等于i2的改为i1，大于i2的减一

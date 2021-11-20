@@ -10,7 +10,7 @@ import (
 
 const (
 	SHIFT = iota
-	REVERSE
+	REDUCE
 	ACC
 	GOTO
 )
@@ -29,7 +29,7 @@ func (a AG) ToString() string {
 	if a.Type == SHIFT {
 		return fmt.Sprintf("S%v", a.Value)
 	}
-	if a.Type == REVERSE {
+	if a.Type == REDUCE {
 		return fmt.Sprintf("R%v", a.Value)
 	}
 	if a.Type == ACC {
@@ -44,7 +44,7 @@ func (a AG) ToString() string {
 // GenerateLRTable 根据Group、GroupRelation生成表格
 func GenerateLRTable() LRTable {
 	var lRTable LRTable
-	for _, _ = range Groups {
+	for range Groups {
 		lRTable = append(lRTable, make(map[base.Tag]AG))
 	}
 
@@ -83,7 +83,7 @@ func GenerateLRTable() LRTable {
 			} else if d.DotIndex == len(d.Right) {
 				for _, tag := range base.GetFollow(d.Left) {
 					lRTable[i][tag] = AG{
-						Type:  REVERSE,
+						Type:  REDUCE,
 						Value: d.Production.GetIndex(),
 					}
 				}
