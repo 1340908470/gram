@@ -51,6 +51,12 @@ F→ (E) | num
 - 直接运行程序：`go run main.go`
 - 构建可执行程序：`go build main.go`
 
+## 直接运行可执行文件
+
+直接运行：
+- `gram/main.exe` （windows）
+- 
+
 ## 程序输入
 
 程序的所有输入是以json文件的形式输入的，文件放在`gram/base/def.json`，其示例结构如下：
