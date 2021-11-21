@@ -54,8 +54,8 @@ F→ (E) | num
 ## 直接运行可执行文件
 
 直接运行：
-- `gram/main.exe` （windows）
-- 
+- `gram/main(win).exe` （windows）
+- `gram/main(mac)`     （macos）
 
 ## 程序输入
 
