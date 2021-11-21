@@ -18,5 +18,5 @@
     "F → (E) | num"
   ],
   "input": "(num/num)",
-  "method": "LL"
+  "method": "LR"
 }
